@@ -8,6 +8,11 @@ Landing page for **Regulon** — AI-powered Product File compliance for Israeli 
 - **Stack:** Next.js (SSR), Hebrew-only, RTL.
 - **Repo:** [github.com/drkraff/Regulon-LandingPage](https://github.com/drkraff/Regulon-LandingPage)
 
+## Current status
+
+- **Phases 1–2 done:** Foundation (RTL, design system, Heebo), all sections and placeholders, header/footer, legal stub pages, skip link.
+- **Next:** Phase 3 — upload area, client-side PDF parsing, results panel, waitlist form.
+
 ## Requirements
 
 Single source of truth for requirements and implementation decisions:
