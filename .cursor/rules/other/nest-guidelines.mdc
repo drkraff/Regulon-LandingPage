@@ -1,4 +1,4 @@
---
+---
 description: Backend and Developer API Development Guidelines
 globs: backend/**/*.ts,developer-api/**/*.ts
 alwaysApply: false

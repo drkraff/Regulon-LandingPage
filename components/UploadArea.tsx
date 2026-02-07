@@ -1,5 +1,6 @@
 "use client";
 
+import type { ChangeEvent } from "react";
 import { useRef, useState } from "react";
 
 export interface UploadAreaProps {
@@ -10,7 +11,7 @@ export function UploadArea({ onFileSelect }: UploadAreaProps) {
   const [file, setFile] = useState<File | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const chosen = e.target.files?.[0] ?? null;
     setFile(chosen);
     onFileSelect?.(chosen);
