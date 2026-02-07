@@ -1,0 +1,261 @@
+---
+description: Test-Driven Development methodology and practices
+alwaysApply: true
+---
+# Cursor IDE – Unified Test-Driven Development (TDD) Ruleset
+
+**Version:** 2.0  
+**Purpose:** Enforce a disciplined Red-Green-Refactor cycle in every Cursor coding session, ensuring new behavior is always introduced with a failing test first, followed by minimal implementation and safe refactoring, all under continuous automated checks.  
+**Intended Audience:** All project contributors using Cursor's AI assistant.
+
+---
+
+## Core TDD Philosophy
+
+**Preamble:** You must follow Test-Driven Development (TDD) for all code changes. TDD is not optional - it is mandatory for every feature, bug fix, or refactoring. You must write tests first, then implement the minimum code to pass those tests, then refactor. This cycle ensures code quality, prevents regressions, and creates maintainable software.
+
+**The Process is the Product:** Remember that your ultimate goal is to understand and demonstrate *how* a task is done. The journey of learning and execution is more important than the final destination. Take **Baby Steps** - the smallest possible meaningful change at a time.
+
+---
+
+## The TDD Cycle: Red-Green-Refactor
+
+### Rule 1: Always Start with a Failing Test (RED)
+- **You must write a test before any implementation code**
+- The test must fail initially (this proves it's testing the right thing)
+- Test the behavior, not the implementation
+- Use descriptive test names: `shouldDoSomething_whenCondition`
+- Mock external dependencies to isolate the unit under test
+- Follow **Arrange-Act-Assert** pattern inside each test
+
+**Example:**
+```typescript
+// RED: Write failing test first
+describe('UserService', () => {
+  it('should create user when valid data provided', () => {
+    const userData = { name: 'John', email: 'john@example.com' }
+    
+    const result = userService.createUser(userData)
+    
+    expect(result.id).toBeDefined()
+    expect(result.name).toBe('John')
+  })
+})
+```
+
+### Rule 2: Write Minimal Implementation (GREEN)
+- **Write only the code needed to make the test pass**
+- Keep it simple - don't overengineer
+- Don't add features not covered by tests
+- Focus on making the current test pass, not future requirements, and do so without breaking previous tests
+- Keep functions ≤ 30 LOC and single-purpose
+- Maintain existing public contracts unless explicitly refactored
+
+**Example:**
+```typescript
+// GREEN: Minimal implementation
+class UserService {
+  createUser(userData: UserData): User {
+    return {
+      id: 'temp-id', // Simple implementation
+      name: userData.name,
+      email: userData.email
+    }
+  }
+}
+```
+
+### Rule 3: Refactor After Tests Pass (REFACTOR)
+- **Only refactor when all tests are passing**
+- Improve code structure, naming, and design
+- Eliminate duplication
+- Ensure tests still pass after refactoring
+
+**Example:**
+```typescript
+// REFACTOR: Improve implementation
+class UserService {
+  createUser(userData: UserData): User {
+    const id = this.generateUserId() // Better implementation
+    return {
+      id,
+      name: userData.name,
+      email: userData.email,
+      createdAt: new Date()
+    }
+  }
+  
+  private generateUserId(): string {
+    return `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  }
+}
+```
+
+---
+
+## Development Workflow
+
+### Rule 4: Project Setup and Understanding
+1. **Understand the existing code** before making changes
+2. **Ask clarifying questions** if requirements are ambiguous
+
+### Rule 5: Feature Development Process
+1. **Understand the feature** by reading README.md and relevant docs
+2. **Create notes** in `notes/features/` folder for the feature
+3. **Follow the Red-Green-Refactor cycle** for each requirement
+4. **Complete one logical change at a time** - take Baby Steps
+5. **Commit frequently** when tests are passing
+6. **Push and create pull request** when feature is complete
+
+### Rule 6: Test Writing Standards
+
+#### Test Structure and Naming
+- **Use descriptive test names** that explain the scenario
+- Follow pattern: `should[ExpectedBehavior]_when[Condition]`
+- Group related tests in describe blocks
+- Each test should test one specific behavior
+
+**Good Examples:**
+```typescript
+it('should return user when valid ID provided')
+it('should throw error when user not found')
+it('should update user email when valid email provided')
+it('should not update user when email is invalid')
+```
+
+#### Test Isolation
+- **Each test must be independent and isolated**
+- Only mock what you don't own (e.g., 3rd party services, APIs, databases, file system). Avoid mocking your own code or business logic.
+- Reset state between tests
+- Don't rely on test execution order
+
+**Example:**
+```typescript
+import { mock, MockProxy } from 'jest-mock-extended'
+describe('UserService', () => {
+  const userService: hookAll(() => module.resolve(UserService));
+  const mockUserRepository: hookEach(() => createMockUserRepository()) 
+
+  it('should create user', async () => {
+    mockUserRepository.save.mockResolvedValue(mockUser)
+    const result = await userService.createUser(userData)
+    expect(mockUserRepository.save).toHaveBeenCalledWith(userData)
+    expect(result).toEqual(mockUser)
+  })
+})
+```
+
+### Rule 7: Test Coverage Requirements
+- **Achieve at least 100% code coverage** for new code
+- Test both happy path and error scenarios
+- Test edge cases and boundary conditions
+- Test all public methods and functions
+
+---
+
+## TDD for Different Scenarios
+
+### Rule 8: TDD for New Features
+1. **Write failing test** that describes the desired behavior
+2. **Implement minimal code** to make test pass
+3. **Refactor** to improve design
+4. **Repeat** for each new requirement
+
+### Rule 9: TDD for Bug Fixes
+1. **Write failing test** that reproduces the bug
+2. **Verify test fails** (confirms it catches the bug)
+3. **Fix the bug** with minimal code changes
+4. **Verify test passes** (confirms bug is fixed)
+5. **Refactor** if needed
+
+### Rule 10: TDD for Refactoring
+1. **Ensure all existing tests pass** before starting
+2. **Make small, incremental changes**
+3. **Run tests after each change**
+4. **Refactor only when tests are green**
+
+---
+
+## Technical Implementation
+
+### Rule 11: Test Framework and Location
+- **Python** → `tests/` folder, `pytest`
+- **TypeScript/JavaScript** → `__tests__/`, `jest` (ESM + TS support)
+- **Naming convention**: `<module>_test.py`, `<Module>Tests.cs`, etc.
+
+### Rule 12: Use Appropriate Testing Tools
+- **Jest** for unit testing in TypeScript/JavaScript
+- **Supertest** for API testing
+- **React Testing Library** for React component testing
+- **Cypress** for end-to-end testing
+
+### Rule 13: Mock External Dependencies
+- **Database calls**: Use repository pattern with mocks
+- **HTTP requests**: Use nock or similar HTTP mocking
+- **File system**: Mock fs module or use temp directories
+- **Time**: Mock Date.now() or use fake timers
+
+### Rule 14: Test Data Management
+- **Use factories** for creating test data
+- **Keep test data minimal** and focused
+- **Use constants** for commonly used test values
+- **Clean up** test data after each test
+
+---
+
+## Automation & CI
+
+## Coding Style Standards
+
+### Rule 18: Language-Specific Standards
+- **Python**: PEP8 via `black` + `isort`; docstrings with Google style
+- **TS/JS**: `prettier` + `eslint:recommended`
+
+### Rule 19: Naming Conventions
+- **Functions** → `camelCase` (TS/JS)
+- **Classes/Types** → `PascalCase`
+- **Global Constants** → `SCREAMING_SNAKE_CASE`
+
+---
+
+## AI Assistant Behavior in Cursor
+
+### Rule 20: Documentation Requirements
+- Create/maintain docstrings for every public symbol **as you implement it**
+- Update module-level README snippets with new examples or API notes
+
+---
+
+## Safety Nets and Anti-Patterns
+
+### Rule 21: Anti-Patterns to Avoid
+- ❌ **Never write tests after implementation**
+- ❌ **Don't test implementation details** (private methods, internal state)
+- ❌ **Avoid complex test setup** that's hard to understand
+- ✅ **Always write tests first** to drive design
+- ✅ **Test public interfaces** and observable behavior
+- ✅ **Keep tests simple and focused**
+
+---
+
+## Test Templates
+
+### TypeScript/JavaScript Template
+```typescript
+// __tests__/FeatureX.spec.ts
+describe('FeatureX', () => {
+  it('should do thing when condition', () => {
+    const data = {...}
+
+    const result = doThing(data)
+
+    expect(result).toEqual({...})
+  })
+})
+```
+
+---
+
+**Concluding Directive:**
+Remember: **Tests drive design, prevent bugs, and create confidence**. Every line of production code must be preceded by a failing test. This is not optional - it is the foundation of reliable software development.
+Always follow the Red-Green-Refactor cycle. Always write tests first. Always take Baby Steps. Always remember that **the process is the product**.
