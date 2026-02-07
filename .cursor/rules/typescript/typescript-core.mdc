@@ -1,0 +1,89 @@
+---
+alwaysApply: true
+---
+# TypeScript Core Patterns
+
+## Type Usage
+- ❌ Avoid using `any`, prefer `unknown` for unknown types
+- ❌ Avoid type assertions (`as`) and non-nullability assertions (`!`)
+  - Use validation functions instead
+- ❌ Avoid boolean operations on non-boolean types (exception for front-end)
+  - Includes nullable/undefinable types
+  - Applies to if/for/while loops, `?`, `!`, `||`, and `&&` operators
+- ✅ Prefer `??` over `||` for null/undefined coalescing
+
+## Variables & Constants
+- ✅ Use inline constants when:
+  - Value is used only once
+  - Value is self-explanatory and maintains context
+- ✅ Export constants when:
+  - Value is used multiple times
+  - Value needs context or explanation
+- ✅ Always use `const` or `let` to declare variables, never `var`
+- ✅ Use `const` by default unless a variable needs reassignment
+- ✅ Declare only one variable per declaration
+- ✅ Use `readonly` for immutable data structures
+
+## Type Safety
+- ✅ Use structural types with interfaces rather than classes
+- ✅ Prefer interfaces over type literal aliases
+- ✅ Use `T[]` syntax for simple array types, `Array<T>` for complex types
+- ✅ Don't use `{}` type, prefer `unknown`, `Record<K,V>`, or `object`
+- ✅ Avoid type coercion, use explicit comparisons
+- ✅ Use type assertions with caution, prefer runtime checks
+- ✅ Prefer type annotations over type assertions for object literals
+
+## Language Features
+- ✅ Always use `const` or `let` to declare variables, never `var`
+- ✅ Use `const` by default unless a variable needs reassignment
+- ✅ Declare only one variable per declaration
+- ❌ Don't use the `Array` constructor
+- ❌ Don't define properties on arrays
+- ✅ Use spread syntax appropriately for arrays and objects
+- ❌ Don't use the `Object` constructor
+- ✅ Filter values in `for...in` loops with `hasOwnProperty`
+- ✅ Prefer `for...of` with `Object.keys/values/entries` over `for...in`
+- ✅ Use triple equals (`===`) and not equals (`!==`)
+
+## Classes
+- ❌ Don't terminate class declarations with semicolons
+- ❌ Don't use semicolons to separate individual method declarations
+- ✅ Separate methods from surrounding code with a single blank line
+- ❌ Avoid private static methods, prefer module-local functions
+- ❌ Don't rely on dynamic dispatch of static methods
+- ❌ Don't use `this` in static contexts
+- ✅ Always use parentheses for constructor calls
+- ❌ Don't use `#private` fields, use TypeScript's visibility annotations
+- ✅ Mark properties never reassigned outside the constructor with `readonly`
+- ✅ Use parameter properties for constructor parameters that initialize class fields
+
+## Type System
+- ✅ Rely on type inference where appropriate
+- ✅ Explicitly specify types for more complex expressions
+
+## Source File Basics
+- ✅ Use UTF-8 encoding for all files
+- ✅ Use only ASCII horizontal space character (0x20) for whitespace
+- ✅ Use special escape sequences over numeric escapes (e.g., `\n` not `\x0a`)
+
+## Source File Structure
+- ✅ Order file contents: copyright, JSDoc fileoverview, imports, implementation
+- ✅ Separate sections with exactly one blank line
+- ✅ Use path imports for TypeScript code
+- ✅ Prefer relative imports for files within the same project
+- ✅ Use named exports in all code, avoid default exports
+
+## Formatting
+- ✅ Line length should not exceed 80 characters
+- ✅ Use 2 spaces for indentation, not tabs
+- ✅ Use braces for all control structures, even single-line statements
+- ✅ Place first statement of a non-empty block on its own line
+
+## Comments
+- ✅ Use JSDoc comments (`/** ... */`) for documentation
+- ✅ Use line comments (`// ...`) for implementation notes
+- ✅ Write JSDoc in Markdown format
+- ✅ Document all top-level exports of modules
+- ❌ Don't include JSDoc type annotations that are redundant with TypeScript types
+- ✅ Place documentation before decorators
+

@@ -26,7 +26,7 @@ Commands
   ```
 
 Notes
-- If `repomix` isn't on PATH, prefer `npx repomix ...`. On Windows, `%APPDATA%\npm` usually contains the global `repomix.cmd`.
+- If `repomix` isn’t on PATH, prefer `npx repomix ...`. On Windows, `%APPDATA%\npm` usually contains the global `repomix.cmd`.
 - Never name a wrapper script `repomix.bat` in the repo root; it will recursively call itself. Use `run-repomix.bat` instead.
 - Use `--dry-run` to quickly confirm which files will be packed without generating output.
 
@@ -34,3 +34,39 @@ Integration with Workflow
 - Discovery (mandatory): Run Repomix and review output before making tool calls or code edits.
 - During implementation: Keep the output handy to navigate file structure and tests.
 - Before closing the task: If the scope changed, re-pack and confirm the output reflects the final structure.
+
+
+## Repomix-First Context Acquisition Rule
+
+Purpose: Ensure the assistant collects complete, focused repository context before starting any task by packing the relevant package/service using Repomix and consuming its output.
+
+Policy
+- Always perform a Repomix discovery pass before coding on any package/service/module.
+- Scope the pack to the specific package/service being worked on when possible. If unsure, pack from repo root.
+- Respect `.repomixignore` in the repository root. Add additional patterns via the `--ignore` CLI flag if needed for a task.
+- Save the output as `repomix-output.xml` at the repository root (or `repomix-<package>.xml` when working inside a specific package).
+- Open and skim the output to build mental context: file boundaries, key modules, entry points, tests, and recent changes.
+- Re-run Repomix when switching packages or after substantial file churn.
+
+Standard Exclusions
+- Logs and run artifacts
+- `.cursor/` workspace metadata
+- Database migrations when not specifically relevant to the task
+
+Commands
+- From repo root (Windows PowerShell):
+  ```powershell
+  npx repomix path/to/directory --output path/to/directory/repomix-output.xml
+  ```
+
+Notes
+- If `repomix` isn’t on PATH, prefer `npx repomix ...`. On Windows, `%APPDATA%\npm` usually contains the global `repomix.cmd`.
+- Never name a wrapper script `repomix.bat` in the repo root; it will recursively call itself. Use `run-repomix.bat` instead.
+- Use `--dry-run` to quickly confirm which files will be packed without generating output.
+
+Integration with Workflow
+- Discovery (mandatory): Run Repomix and review output before making tool calls or code edits.
+- During implementation: Keep the output handy to navigate file structure and tests.
+- Before closing the task: If the scope changed, re-pack and confirm the output reflects the final structure.
+
+

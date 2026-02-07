@@ -1,0 +1,510 @@
+---
+description: Backend and Developer API Development Guidelines
+globs: backend/**/*.ts,developer-api/**/*.ts
+alwaysApply: false
+---
+# Backend and Developer API Development Guidelines
+
+> **Note**: This document extends the [TypeScript Guidelines](typescript-guidelines.mdc) with NestJS-specific patterns. 
+> Ensure you're familiar with the base TypeScript conventions before proceeding.
+>
+> This guide focuses on NestJS architecture, TypeORM patterns, and backend-specific best practices.
+> For general TypeScript conventions (naming, async patterns, error handling basics), refer to the TypeScript Guidelines.
+
+## Table of Contents
+1. [Architecture Principles](#architecture-principles)
+2. [NestJS Best Practices](#nestjs-best-practices)
+3. [TypeORM and Database](#typeorm-and-database)
+4. [Service Layer Guidelines](#service-layer-guidelines)
+5. [Controller Guidelines](#controller-guidelines)
+6. [Error Handling](#error-handling)
+7. [Validation and DTOs](#validation-and-dtos)
+8. [Testing Standards](#testing-standards)
+9. [Performance Optimization](#performance-optimization)
+
+## Architecture Principles
+
+### Modular Architecture
+- ✅ Organize code by feature/domain modules
+- ✅ Each module should be self-contained with clear boundaries
+- ✅ Use NestJS modules to enforce encapsulation
+- ✅ Export only what other modules need to access
+
+```typescript
+// Good - Feature-based organization
+src/
+├── modules/
+│   ├── account/
+│   │   ├── account.module.ts
+│   │   ├── account.service.ts
+│   │   ├── account.controller.ts
+│   │   ├── dto/
+│   │   ├── entities/
+│   │   └── types/
+│   └── datastore/
+│       ├── datastore.module.ts
+│       ├── datastore.service.ts
+│       └── ...
+```
+
+### Dependency Injection
+- ✅ Always use constructor injection
+- ✅ Use interfaces for loose coupling
+- ✅ Leverage NestJS's built-in DI container
+- ❌ Never instantiate services manually
+
+```typescript
+// Good
+@Injectable()
+export class AccountService {
+  constructor(
+    private readonly entityManager: CyEntityManager,
+    private readonly tenantConfigService: TenantConfigService,
+    @Inject(REQUEST) private readonly request: CyRequest,
+  ) {}
+}
+```
+
+## NestJS Best Practices
+
+### Module Organization
+```typescript
+@Module({
+  imports: [/* Required modules */],
+  controllers: [AccountController],
+  providers: [AccountService, /* Other providers */],
+  exports: [AccountService], // Only export what's needed
+})
+export class AccountModule {}
+```
+
+### Use NestJS CLI
+- ✅ Use `nest generate` commands when possible
+- ✅ `nest g module account`
+- ✅ `nest g service account`
+- ✅ `nest g controller account`
+
+### Service Inheritance
+- ✅ Extend base services when appropriate
+- ✅ Use `CyBaseOrmService` for entity services
+
+```typescript
+@Injectable()
+export class AccountService extends CyBaseOrmService<Account> {
+  constructor(
+    @InjectRepository(Account)
+    accountRepository: Repository<Account>,
+    private readonly entityManager: CyEntityManager,
+  ) {
+    super(accountRepository);
+  }
+}
+```
+
+## TypeORM and Database
+
+### Entity Manager Usage
+- ✅ Always use `CyEntityManager` instead of raw TypeORM methods
+- ✅ Use `getFindQb` for query building, with `loadEagerRelations: false` and `loadRelationIds: false` when possibole 
+- ✅ Use `partialFind` for partial entity queries
+- ✅ Use `CyRaw` for raw SQL conditions
+
+```typescript
+// Good - Using getFindQb
+const queryBuilder = this.entityManager.getFindQb(Account, {
+  select: buildAccountDtoEntityFields,
+  where: filters,
+  relations: {
+    deploymentScope: true,
+    accountDatastoreConfiguration: true,
+  },
+  loadEagerRelations: false,
+  loadRelationIds: false,
+});
+
+// Good - Using partialFind
+const accounts = await this.entityManager.partialFind(
+  Account,
+  buildAccountDtoEntityFields,
+  { where: { uid: In(accountUids) } }
+);
+
+// Good - Using CyRaw
+where: {
+  recordCountByDataClassUid: CyRaw(
+    columnAlias => `${columnAlias}::jsonb ?| :classificationUids`,
+    { classificationUids }
+  ),
+}
+```
+
+### Query Result Validation
+- ✅ Always validate query results
+- ✅ Use `entityManager.validatedQuery` for raw queries
+- ✅ Use `transformAndValidateQueryResults` for transformation
+
+```typescript
+// Good - Validated query
+const results = await this.entityManager.validatedQuery(
+  GetM365AccountsAndSensitivityLabelsQueryResult,
+  query
+);
+
+// Good - Transform and validate
+const validatedResult = await transformAndValidateQueryResults(
+  AccountDatastores,
+  raw
+);
+```
+
+### Partial Find Fields
+- ✅ Define partial find fields as constants
+- ✅ Use `CyEntityManager.createPartialFindFields`
+
+```typescript
+const buildAccountDtoEntityFields = CyEntityManager.createPartialFindFields(Account, {
+  uid: true,
+  name: true,
+  platform: true,
+  inPlatformIdentifier: true,
+  // ... other fields
+});
+```
+
+## Service Layer Guidelines
+
+### Service Responsibilities
+- ✅ Business logic implementation
+- ✅ Data transformation and validation
+- ✅ Transaction management
+- ❌ No HTTP-specific logic (that belongs in controllers)
+
+### Method Organization
+```typescript
+@Injectable()
+export class AccountService extends CyBaseOrmService<Account> {
+  // 1. Constructor
+  constructor(/* dependencies */) {}
+
+  // 2. Public methods (API)
+  async getAccounts(params: GetAccountsQueryParams): Promise<AccountsResponse> {
+    // Implementation
+  }
+
+  // 3. Private helper methods
+  private buildDto(entity: Account): AccountDto {
+    // Implementation
+  }
+
+  // 4. Query builders
+  private searchAndFilterQuery(params: QueryParams): SelectQueryBuilder<Account> {
+    // Implementation
+  }
+}
+```
+
+### Error Handling in Services
+```typescript
+async deleteAccount(uid: string): Promise<void> {
+  const account = await this.repository.findOneBy({ uid });
+  
+  if (!account) {
+    throw new NotFoundException('Account not found');
+  }
+  
+  if (!this.canDelete(account)) {
+    throw new ConflictException('Cannot remove account that was / is connected');
+  }
+  
+  await this.repository.delete(uid);
+}
+```
+
+## Controller Guidelines
+
+### Controller Responsibilities
+- ✅ HTTP request/response handling
+- ✅ Input validation via DTOs
+- ✅ Delegating to services
+- ❌ No business logic
+
+```typescript
+@Controller('accounts')
+export class AccountController {
+  constructor(private readonly accountService: AccountService) {}
+
+  @Get()
+  async getAccounts(
+    @Query() queryParams: GetAccountsQueryParams
+  ): Promise<AccountsResponse> {
+    return this.accountService.getAccounts(queryParams);
+  }
+
+  @Delete(':uid')
+  async deleteAccount(@Param('uid') uid: string): Promise<void> {
+    await this.accountService.deleteAccount(uid);
+  }
+}
+```
+
+## Error Handling
+
+> **Note**: For general error handling patterns (try-catch, error messages), see [TypeScript Guidelines - Exceptions & Error Handling](typescript-guidelines.mdc#exceptions--error-handling).
+
+### NestJS-Specific Exception Handling
+- ✅ Use NestJS built-in HTTP exceptions for REST APIs
+- ✅ Create custom exceptions extending `HttpException`
+- ✅ Use appropriate HTTP status codes
+
+```typescript
+// Use built-in exceptions
+throw new NotFoundException('Account not found');
+throw new ConflictException('Operation not allowed');
+throw new BadRequestException('Invalid input');
+throw new UnauthorizedException('Invalid credentials');
+throw new ForbiddenException('Insufficient permissions');
+
+// Custom exception for specific business logic
+export class DataProcessingException extends HttpException {
+  constructor(message: string, details?: any) {
+    super({ message, details }, HttpStatus.UNPROCESSABLE_ENTITY);
+  }
+}
+```
+
+### Global Exception Filters
+```typescript
+@Catch()
+export class AllExceptionsFilter implements ExceptionFilter {
+  catch(exception: unknown, host: ArgumentsHost) {
+    // Handle and format errors consistently
+  }
+}
+```
+
+## Validation and DTOs
+
+### DTO Best Practices
+- ✅ Use class-validator decorators
+- ✅ Create separate DTOs for requests/responses
+- ✅ Document each property with JSDoc
+- ✅ **Always use `!` (non-null assertion) for ALL DTO properties, including optional ones**
+
+### DTO Property Conventions
+```typescript
+export class AccountDto {
+  // Required properties - use !
+  @CyApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  uid!: string;
+
+  @CyApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  name!: string;
+
+  // Optional properties - STILL use !
+  @CyApiProperty({ optional: true })
+  @IsOptionallyUndefined()
+  @IsString()
+  addedBy!: string | undefined;  // Note: type includes undefined, but still use !
+
+  // Nullable properties - STILL use !
+  @CyApiProperty()
+  @IsOptionallyNull()
+  @IsString()
+  description!: string | null;
+
+  // Even for complex optional types - use !
+  @CyApiProperty({ enum: ConnectionStatusReason, optional: true })
+  @IsOptionallyUndefined()
+  @IsEnum(ConnectionStatusReason)
+  connectionStatusReason!: ConnectionStatusReason | undefined;
+}
+```
+
+### DTO Validation Decorators
+```typescript
+// For optional properties, use custom validators
+@IsOptionallyUndefined()  // For properties that can be undefined
+@IsOptionallyNull()       // For properties that can be null
+
+// Always combine with type validators
+@IsOptionallyUndefined()
+@IsString()
+optionalString!: string | undefined;
+```
+
+### Response DTOs
+```typescript
+export class AccountDto {
+  uid!: string;
+  name!: string;
+  platform!: AccountPlatform;
+  status!: ConnectionStatus;
+  dateAdded!: Date;
+  
+  // Optional properties still use !
+  deploymentScopeName!: string | undefined;
+  deletionFailureReasonToDisplay!: DeploymentScopeDeletionFailureReasonToDisplay | undefined;
+  
+  // Constructor pattern for building DTOs
+  static fromEntity(account: Account): AccountDto {
+    const dto = new AccountDto();
+    dto.uid = account.uid;
+    dto.name = account.name ?? account.inPlatformIdentifier;
+    dto.platform = account.platform;
+    dto.status = account.status;
+    dto.dateAdded = account.rowInsertedAt;
+    dto.deploymentScopeName = account.deploymentScope?.name;
+    return dto;
+  }
+}
+```
+
+## Testing Standards
+
+> **Note**: For general testing conventions (naming, structure), see [TypeScript Guidelines - Testing Standards](typescript-guidelines.mdc#testing-standards).
+
+### NestJS Unit Tests
+```typescript
+describe('AccountService', () => {
+  let service: AccountService;
+  let entityManager: MockType<CyEntityManager>;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AccountService,
+        {
+          provide: CyEntityManager,
+          useFactory: mockEntityManagerFactory,
+        },
+      ],
+    }).compile();
+
+    service = module.get<AccountService>(AccountService);
+    entityManager = module.get(CyEntityManager);
+  });
+
+  describe('getAccounts', () => {
+    it('returns paginated accounts with correct DTOs', async () => {
+      // Arrange
+      const mockAccounts = [createMockAccount()];
+      entityManager.partialFind.mockResolvedValue(mockAccounts);
+
+      // Act
+      const result = await service.getAccounts({ page: 1, limit: 10 });
+
+      // Assert
+      expect(result.accounts).toHaveLength(1);
+      expect(result.accounts[0]).toBeInstanceOf(AccountDto);
+    });
+  });
+});
+```
+
+### Integration Tests
+```typescript
+describe('AccountController (e2e)', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    const moduleFixture = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    await app.init();
+  });
+
+  it('/accounts (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/accounts')
+      .expect(200)
+      .expect((res) => {
+        expect(res.body).toHaveProperty('accounts');
+        expect(res.body).toHaveProperty('meta');
+      });
+  });
+});
+```
+
+## Performance Optimization
+
+### Query Optimization
+- ✅ Use indexes on frequently queried columns
+- ✅ Avoid N+1 queries by using proper joins
+- ✅ Use pagination for large datasets
+- ✅ Use `select` to fetch only required fields
+
+```typescript
+// Good - Optimized query with select and joins
+const query = this.entityManager.getFindQb(Account, {
+  select: { uid: true, name: true, status: true },
+  relations: { deploymentScope: true },
+  where: { status: In(ConnectedStatuses) },
+  take: 100,
+  skip: 0,
+});
+```
+
+### Caching Strategies
+```typescript
+@Injectable()
+export class TenantConfigService {
+  @Cacheable({
+    ttl: 300, // 5 minutes
+    key: (tenantId: string) => `tenant-config:${tenantId}`,
+  })
+  async getConfig(tenantId: string): Promise<TenantConfig> {
+    return this.entityManager.findOneOrFail(TenantConfig, { 
+      where: { tenantId } 
+    });
+  }
+}
+```
+
+### Bulk Operations
+- ✅ Use `upsert` instead of `save` for bulk operations
+- ✅ Use transactions for related operations
+
+```typescript
+// Good - Bulk upsert
+await this.entityManager.upsert(
+  Account,
+  accounts,
+  { conflictPaths: ['uid'] }
+);
+
+// Good - Transaction
+await this.entityManager.transaction(async (transactionalEntityManager) => {
+  await transactionalEntityManager.save(account);
+  await transactionalEntityManager.save(relatedEntity);
+});
+```
+
+## Summary
+
+This guide complements the [TypeScript Guidelines](typescript-guidelines.mdc) with NestJS-specific patterns for backend development.
+
+### Key Principles
+1. **Follow base TypeScript conventions** (see TypeScript Guidelines)
+2. **Always use the most typed version** - especially with TypeORM
+3. **Validate all external data and query results**
+4. **Use dependency injection and modular architecture**
+5. **Follow NestJS conventions and use CLI tools**
+6. **Optimize queries with proper TypeORM patterns**
+7. **Write comprehensive tests for all services**
+8. **Handle errors gracefully with proper HTTP exceptions**
+9. **Document complex logic and decisions**
+
+### Quick Reference
+- Entity queries: Use `getFindQb` with `loadEagerRelations: false`
+- Partial queries: Use `partialFind` with defined fields
+- Raw conditions: Use `CyRaw` for type-safe raw SQL
+- Validation: Use `validatedQuery` or `transformAndValidateQueryResults`
+- Bulk operations: Prefer `upsert` over `save`
+- Error handling: Use NestJS built-in exceptions
+- Testing: Write unit and integration tests

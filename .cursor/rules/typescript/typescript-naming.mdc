@@ -1,0 +1,39 @@
+---
+description: TypeScript naming conventions and patterns
+alwaysApply: false
+---
+# TypeScript Naming Conventions
+
+## Functions & Methods
+- ✅ Start function/method names with a verb (e.g., `startDataScan` instead of `dataScanLogic`)
+- ✅ Use `deleteXIfExists` for delete operations that allow already-deleted targets
+- ✅ Use descriptive, action-oriented names that clearly indicate purpose
+
+## Enums & Constants
+- ✅ Use UpperCamelCase for enum type names
+- ✅ Use CONSTANT_CASE for enum values
+  ```typescript
+  enum ScanStatus {
+    IN_PROGRESS = 'IN_PROGRESS',
+    COMPLETED = 'COMPLETED'
+  }
+  ```
+- ✅ Use CONSTANT_CASE for global-scope constants
+
+## External Entities
+- ✅ Use `VendorServiceEntity` format for external API entities
+  ```typescript
+  class AzureSynapseWorkspace {}
+  ```
+
+## Files & Modules
+- ✅ NestJS files: use `.service.ts`, `.controller.ts`, `.module.ts` suffixes
+- ✅ NestJS classes: use `Service`, `Controller`, `Module` suffixes
+- ✅ Microservice main modules: name according to microservice name
+
+## General Naming
+- ✅ Use `UpperCamelCase` for classes, interfaces, types, enums, decorators
+- ✅ Use `lowerCamelCase` for variables, parameters, functions, methods, properties
+- ✅ Use `CONSTANT_CASE` for global constant values and enum values
+- ❌ Don't use underscores as prefixes or suffixes for identifiers
+- ✅ Use descriptive names that are clear to new readers

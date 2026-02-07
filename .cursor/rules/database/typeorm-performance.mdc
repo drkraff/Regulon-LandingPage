@@ -1,0 +1,21 @@
+---
+description: TypeORM performance considerations and best practices
+alwaysApply: false
+---
+# TypeORM Performance
+
+## Save vs Upsert
+
+### Guidelines
+- ❌ Avoid using `save` for bulk operations
+- ✅ Use `upsert` for bulk operations
+- `save` generates multiple queries (100+ for 100 entities)
+- `upsert` uses single query for bulk operations
+
+## Performance Best Practices
+- ✅ Use `upsert` for bulk operations instead of `save`
+- ✅ Avoid N+1 queries by using proper relations
+- ✅ Use query builders for complex queries
+- ✅ Consider using raw queries for performance-critical operations
+- ✅ Use database indexes appropriately
+- ✅ Monitor query performance in development
