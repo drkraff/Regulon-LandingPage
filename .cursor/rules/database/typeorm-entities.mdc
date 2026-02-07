@@ -1,0 +1,146 @@
+---
+description: TypeORM entity initialization and column definitions
+alwaysApply: false
+---
+# TypeORM Entity Patterns
+
+## Entity Initialization
+
+### Core Rules
+- ❌ Never define constructors for entity classes
+- ✅ Use the generic create function for `INSERT` queries
+- ✅ Ensure all fields are properly initialized
+
+### Create Function Implementation
+```typescript
+static readonly create = entityCreationFunctionFactory(EntityName, [
+    ...UnPartitionedBaseEntity.unPartitionedBaseEntityOptionalCreationFields,
+    ...buildOptionalCreationFields(EntityName, []),
+]);
+```
+
+### Optional Creation Fields
+```typescript
+static entityOptionalCreationFields = [
+    ...ParentEntity.parentEntityOptionalCreationFields,
+    ...buildOptionalCreationFields(CurrentEntity, []),
+];
+```
+
+## Column Definitions
+
+### Basic Rules
+1. Always use `!` for column definitions
+   ```typescript
+   @Column({type: String, nullable: false})
+   field!: string;
+   ```
+
+2. Use `?` for non-eager relations
+   ```typescript
+   @OneToOne(() => RelatedEntity, { eager: false })
+   relation?: RelatedEntity;
+   ```
+
+3. ❌ Never use `class-validator` decorators
+   ```typescript
+   // Bad
+   @Column({type: String, nullable: false})
+   @IsString()
+   field!: string;
+
+   // Good
+   @Column({type: String, nullable: false})
+   field!: string;
+   ```
+
+### Column Type Conventions
+1. Always explicitly state nullability
+   ```typescript
+   // Bad
+   @Column({type: String})
+   field!: string;
+
+   // Good
+   @Column({type: String, nullable: false})
+   field!: string;
+   ```
+
+2. Always specify type in single options parameter
+   ```typescript
+   // Bad
+   @Column(String, {nullable: false})
+   field!: string;
+
+   // Good
+   @Column({type: String, nullable: false})
+   field!: string;
+   ```
+
+### Special Column Types
+
+#### Date Columns
+```typescript
+@Column({type: DATE_COLUMN_TYPE, nullable: false})
+dateField!: Date;
+```
+
+#### Enums
+1. Entity-specific enums:
+   ```typescript
+   @Column({type: 'enum', enum: Status})
+   status!: Status;
+   ```
+
+2. Shared enums:
+   ```typescript
+   @Column({
+     type: 'enum',
+     enum: Sensitivity,
+     enumName: DBEnum.Sensitivity,
+   })
+   sensitivity!: Sensitivity;
+   ```
+
+#### JSON Columns
+```typescript
+@Column({ type: 'jsonb', default: {} })
+jsonField!: Record<string, number>;
+```
+
+⚠️ **JSON Column Warnings**:
+- Always use `jsonb`, never `json`
+- Avoid JSONB columns when possible
+- Consider moving JSONB data to separate tables
+- Create local type definitions for external types
+
+## Entity Unique Constraints
+
+### Rules
+1. Define unique constraints using class decorators
+2. For Single Table Inheritance:
+   - Define unique constraints on parent entity for shared constraints
+   - Or define different constraints per child entity
+
+## Single Table Inheritance
+
+### Rules
+1. ❌ Never define duplicate column names across sibling tables
+2. ✅ All child entity columns must be nullable
+3. Use type to distinguish between:
+   - Required nullable columns
+   - Truly nullable columns
+
+### Example
+```typescript
+@ChildEntity('child_type')
+export class ChildEntity extends ParentEntity {
+    // Required nullable column
+    @Column({ type: String, nullable: true })
+    requiredField!: string;
+
+    // Truly nullable column
+    @Column({ type: String, nullable: true })
+    optionalField!: string | null;
+}
+```

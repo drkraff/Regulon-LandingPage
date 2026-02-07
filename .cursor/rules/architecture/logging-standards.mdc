@@ -1,0 +1,49 @@
+---
+description: Logging conventions and standards
+alwaysApply: false
+---
+# Logging Standards
+
+## Log Message Guidelines
+- ✅ Use unique log messages to trace back to specific code
+- ✅ Log messages should always be constant strings with structured parameters
+  ```typescript
+  // Good
+  log.debug('Starting scan', { scanId })
+  
+  // Bad
+  log.debug(`Starting scan ${scanId}`)
+  ```
+- ✅ Always provide context in logs
+- ✅ Log main object IDs and container sizes
+- ❌ Never log sensitive information
+
+## Logging Points
+- ✅ Log entry points of scripts & tasks (except microservice endpoints)
+- ✅ Log failures when exceptions aren't thrown
+- ✅ Log feature flag behavior
+- ✅ Log special cases with early returns
+- ✅ Acceptable to log for performance and statistics
+
+## Core Rules
+1. ✅ Use unique log messages
+2. ✅ Log important scenarios:
+   - Script/task entry points
+   - Action failures (when no exception thrown)
+   - Feature flag state changes
+   - Special case early returns
+3. ✅ Provide context
+   ```typescript
+   // Good
+   'Could not reach verify-py microservice, marking every file classification as not verified and datascan verification step as failed'
+   
+   // Bad
+   'Could not verify file classifications'
+   ```
+4. ✅ Log useful data:
+   - Main object IDs
+   - Container sizes
+5. ✅ Log for:
+   - Performance
+   - Statistics
+6. ❌ Never log sensitive information

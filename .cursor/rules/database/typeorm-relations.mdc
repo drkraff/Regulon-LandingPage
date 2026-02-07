@@ -1,0 +1,36 @@
+---
+description: TypeORM relationship patterns and configurations
+alwaysApply: false
+---
+# TypeORM Relations
+
+## Core Rules
+1. ❌ Never use `eager: true`
+2. ✅ Use `eager: false` with `?` for relations
+3. ❌ Never use `lazy: true`
+4. ✅ Always specify names for `ManyToMany` tables
+5. ✅ Always add `onUpdate: 'CASCADE'` to FK relations
+6. ✅ Use `Relation<X>` type for relations
+7. ✅ Always use `cascade: false`
+8. ✅ Maintain consistent `createForeignKeyConstraints` settings
+
+## Example Relations
+```typescript
+@OneToOne(() => RelatedEntity, { 
+    nullable: false, 
+    eager: false, 
+    onUpdate: 'CASCADE' 
+})
+@JoinColumn()
+relation?: Relation<RelatedEntity>;
+```
+
+## Known Issues
+
+1. STI tables with relations to same STI table:
+   - Only one child can have Index decorator
+   - Disable eslint for other relations
+
+2. Column name conflicts:
+   - ❌ Never define duplicate column names in sibling tables
+   - TypeORM uses column definition from one table only

@@ -1,0 +1,15 @@
+---
+alwaysApply: true
+---
+# TypeScript Data Validation
+
+## External Data
+- ✅ External data must be validated for type
+- ✅ Use classes with `class-validator` decorators for raw data validation
+- ✅ Use `validateObject` function
+- ✅ Validate all inputs before processing
+
+## Data Structures
+- ✅ Prefer immutable data structures
+- ✅ Use TypeScript interfaces for data contracts
+- ✅ Validate data at boundaries (API endpoints, file inputs, etc.)

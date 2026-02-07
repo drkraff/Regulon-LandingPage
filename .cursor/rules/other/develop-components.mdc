@@ -1,0 +1,301 @@
+---
+alwaysApply: false
+---
+# Component Development Guidelines
+
+## Component Planning and Decision Making
+
+1. **Planning Phase**
+
+   - Begin with step-by-step planning with the developer
+   - Document requirements and use cases
+   - Identify potential reuse opportunities
+   - Consider edge cases and error scenarios
+   - Plan component architecture and data flow
+
+2. **Decision Making Process**
+
+   ```
+   1. Search Existing Components
+      ├── Check design-system
+      ├── Check common/components
+      └── If nothing suitable found:
+          └── Discuss with developer:
+              ├── Can we extend an existing component?
+              ├── Should we create a new reusable component?
+              └── Document the decision and rationale
+
+   2. If Creating New Component
+      ├── Review planned architecture with developer
+      ├── Agree on:
+      │   ├── Component scope
+      │   ├── Props interface
+      │   ├── Error handling strategy
+      │   └── User feedback approach
+      └── Document decisions in component JSDoc
+   ```
+
+## Component Source Hierarchy
+
+### Check Existing Components First
+
+- Search in design-system package first
+- Look in common/components directory
+- Only create new components if existing ones can't be extended/reused
+- Document why a new component is needed instead of using existing ones
+
+### When to Create New Components
+
+- When existing components don't support required functionality
+- When combining multiple components creates a reusable pattern
+- When a component becomes too complex and needs to be split
+- Always document the decision in the component's JSDoc
+
+## Component Structure and Organization
+
+### 1. File Structure
+
+```
+ComponentName/
+  ├── index.tsx        // Main component + exports
+  ├── types.ts         // TypeScript interfaces/types
+  ├── constants.ts     // Constants used in the component
+  ├── hooks/           // Custom hooks specific to this component
+  ├── components/      // Sub-components
+  └── utils/           // Helper functions
+```
+
+### 2. Code Organization
+
+**Functional Components**: Always use functional components over class components for better readability, maintainability, and compatibility with React hooks.
+
+**Arrow Functions**: Use arrow functions for component definitions and callbacks to maintain lexical scope and consistency.
+
+```typescript
+// 1. Imports - ordered by scope
+import { FC, useCallback, useState, useMemo, useReducer } from "react";
+import { CyButton, CyTable, styleGuide } from "design-system";
+import { styled } from "@mui/material";
+import { useSnackbar } from "../providers";
+import { localUtils } from "./utils";
+
+// 2. Types and Interfaces
+export interface CyComponentProps {
+  /** Document each prop with JSDoc */
+  title: string;
+  onAction: () => void;
+}
+
+// 3. Styled Components
+const Container = styled("div")(({ theme }) => ({
+  padding: theme.spacing(2),
+  ...styleGuide.typography.interRegular14,
+}));
+
+// 4. Component Implementation
+export const CyComponent: FC<CyComponentProps> = ({ title, onAction }) => {
+  // State Management
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Memoized values
+  const memoizedValue = useMemo(() => {
+    // Complex computations
+    return title.toUpperCase();
+  }, [title]);
+
+  // Callbacks
+  const handleAction = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      await onAction();
+      showSuccessSnackbar("Action completed");
+    } catch (error) {
+      Sentry.captureException(error, {
+        extra: {
+          componentName: "CyComponent",
+          action: "handleAction",
+        },
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [onAction, showSuccessSnackbar]);
+
+  // Render
+  return (
+    <Container>
+      <CyButton onClick={handleAction} loading={isLoading}>
+        {title} (Count: {state.count})
+      </CyButton>
+    </Container>
+  );
+};
+```
+
+**State Management**:
+- Use `useState` for simple state management
+
+**Hooks Usage**:
+- Only call Hooks at the top level of functional components or custom Hooks
+- Do not call Hooks inside loops, conditions, or nested functions
+- Use `useEffect` for side effects (e.g., data fetching, subscriptions), always specifying dependency arrays
+- Use `useCallback` and `useMemo` to memoize functions and values for performance optimization
+
+**Keys in Lists**:
+- Provide unique and stable key props when rendering lists (e.g., `<li key={item.id}>`)
+- Avoid using array indices as keys if the list order can change
+
+**Performance Optimization**:
+- Use `React.memo` to prevent unnecessary re-renders of pure components
+- Implement code splitting with `React.lazy` and `Suspense` to reduce initial bundle size
+
+### 3. User Feedback Patterns
+
+```typescript
+// Success Feedback
+const handleSuccess = useCallback(async () => {
+  try {
+    await action();
+    showSuccessSnackbar("Operation completed successfully");
+  } catch (error) {
+    handleError(error);
+  }
+}, [action]);
+
+// Error Feedback
+const handleError = useCallback((error: Error) => {
+  Sentry.captureException(error);
+  showErrorSnackbar("Operation failed. Please try again");
+}, []);
+
+// Confirmation Dialogs
+const handleDelete = useCallback(() => {
+  showPopupModal({
+    title: "Confirm Deletion",
+    content: "Are you sure you want to delete this item?",
+    footerButtons: (
+      <>
+        <CyButton onClick={onCancel}>Cancel</CyButton>
+        <CyButton
+          onClick={onConfirmDelete}
+          buttonStyleVariant={CyButtonStyleVariant.Danger}
+        >
+          Delete
+        </CyButton>
+      </>
+    ),
+  });
+}, [onCancel, onConfirmDelete]);
+```
+
+### 4. Error Handling Best Practices
+
+```typescript
+// Critical Operations
+try {
+  await criticalOperation();
+} catch (error) {
+  Sentry.captureException(error, {
+    extra: {
+      componentName: "CyComponent",
+      operation: "criticalOperation",
+      context: { /* relevant context */ },
+    },
+  });
+  showErrorSnackbar("A critical error occurred");
+}
+
+// User Actions
+const handleUserAction = useCallback(async () => {
+  try {
+    setIsLoading(true);
+    await userAction();
+    showSuccessSnackbar("Action completed");
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      showErrorSnackbar(error.message);
+    } else {
+      Sentry.captureException(error);
+      showErrorSnackbar("An unexpected error occurred");
+    }
+  } finally {
+    setIsLoading(false);
+  }
+}, [userAction]);
+```
+
+### 5. Component Reusability Guidelines
+
+**Props Design**:
+```typescript
+// Good - flexible and reusable
+interface CyTableProps<T> {
+  data: T[];
+  columns: ColumnConfig<T>[];
+  onSort?: (column: keyof T) => void;
+  renderCustomCell?: (row: T, column: keyof T) => ReactNode;
+}
+```
+
+**Component Composition**:
+```tsx
+// Good - flexible composition
+<CyDataPanel>
+  <CyDataPanel.Header>
+    <CyDataPanel.Title>{title}</CyDataPanel.Title>
+    <CyDataPanel.Actions>{actions}</CyDataPanel.Actions>
+  </CyDataPanel.Header>
+  <CyDataPanel.Content>{children}</CyDataPanel.Content>
+</CyDataPanel>
+```
+
+**Styling Flexibility**:
+```typescript
+// Good - theme-based styling
+const Container = styled("div")(({ theme }) => ({
+  padding: theme.spacing(2),
+  backgroundColor: theme.palette.background.paper,
+}));
+```
+
+## Best Practices Summary
+
+### Component Creation
+- Always check design-system first
+- Discuss and plan with developer before creating new components
+- Document decisions and rationale
+- Follow the established file structure
+- Prefer functional components and arrow functions
+
+### Error Handling
+- Use Sentry for critical errors
+- Provide user-friendly error messages
+- Handle edge cases gracefully
+- Document error handling strategy
+
+### User Feedback
+- Only implement snackbars when specifically requested
+- Follow existing feedback patterns in similar components
+- Use modals for important user interactions
+- Document feedback implementation decisions
+
+### Performance
+- Memoize callbacks and computed values with `useCallback` and `useMemo`
+- Use proper dependency arrays in hooks
+- Avoid unnecessary renders with `React.memo`
+- Profile component performance when needed
+- Implement code splitting for large applications
+
+### Code Quality
+- Use linters like ESLint to maintain code quality
+- Follow DRY principle to avoid code duplication
+- Write clean, self-explanatory code
+- Use destructuring and spread operators for cleaner code
+
+
+### Security
+- Be cautious with rendering HTML; use sanitization libraries like DOMPurify
+
+### Documentation
+- Try not to leave comments.
+- Write self explanatory code as possible 

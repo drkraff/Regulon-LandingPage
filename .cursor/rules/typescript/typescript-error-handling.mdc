@@ -1,0 +1,27 @@
+---
+description: TypeScript exception and error handling patterns
+alwaysApply: false
+---
+# TypeScript Error Handling
+
+## Exception Guidelines
+- ✅ Exception messages must always be constant strings
+  ```typescript
+  // Good
+  throw new BaseException('Failed to download file')
+  
+  // Bad
+  throw new BaseException(`Failed downloading file ${fileId}`)
+  ```
+- ✅ Use `error` as the variable name in catch blocks with implicit `unknown` type
+- ✅ Don't specify explicit types in catch blocks
+- ✅ REST service exceptions should extend NestJS's `HttpException`
+- ❌ Avoid try-catch solely for naive error logging
+- ✅ Implement "fast fail" approach - throw exceptions early
+
+## Error Context
+- ✅ Always provide meaningful context in error messages
+- ✅ Include relevant IDs and state information in error context
+- ✅ Log failures when exceptions aren't thrown
+
+> **For NestJS/REST APIs**: See [NestJS-Specific Exception Handling](nest-guidelines.mdc#error-handling) for HTTP exceptions and global filters.

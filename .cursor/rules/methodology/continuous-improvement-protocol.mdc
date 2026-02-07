@@ -92,7 +92,9 @@ This outlines refining knowledge from `.cursor/docs/raw_reflection_log.md` into 
 
 ## 3. Guidelines for Knowledge Content
 
-These guidelines apply to entries in `.cursor/docs/raw_reflection_log.md` (initial capture) and especially to `.cursor/docs/consolidated_learnings.md` (refined, long-term knowledge).* **Prioritize High-Value Insights:** Focus on lessons that significantly impact future performance, **lead to more robust or generalizable understanding,** or detail critical errors and their resolutions, major time-saving discoveries, fundamental shifts in understanding, and essential project-specific configurations.
+These guidelines apply to entries in `.cursor/docs/raw_reflection_log.md` (initial capture) and especially to `.cursor/docs/consolidated_learnings.md` (refined, long-term knowledge).
+
+* **Prioritize High-Value Insights:** Focus on lessons that significantly impact future performance, **lead to more robust or generalizable understanding,** or detail critical errors and their resolutions, major time-saving discoveries, fundamental shifts in understanding, and essential project-specific configurations.
 * **Be Concise & Actionable (especially for `consolidated_learnings.md`):** Information should be clear, to the point, and useful when revisited. What can be *done* differently or leveraged next time?
 * **Strive for Clarity and Future Usability:** Document insights in a way that is clear and easily understandable for future review, facilitating effective knowledge retrieval and application (akin to self-explainability).
 * **Document Persistently, Refine & Prune Continuously:** Capture raw insights immediately. Systematically refine, consolidate, and prune this knowledge as per Section 2.

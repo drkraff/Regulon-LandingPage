@@ -1,0 +1,42 @@
+---
+description: TypeScript async patterns
+alwaysApply: false
+---
+# TypeScript Async Programming
+
+## Promise Handling
+- ✅ Functions returning promises should await internal promises before returning
+  ```typescript
+  // Good
+  async function getData() {
+    const result = await fetchData()
+    return result
+  }
+  
+  // Bad
+  async function getData() {
+    return fetchData()
+  }
+  ```
+- ❌ Never run async logic without awaiting or try-catching
+- ❌ Avoid using `Promise.all`
+- ⚠️ Use utility functions instead of `Promise.allSettled`:
+  - `waitForAllAndThrowErrors`
+  - `waitForAllAndThrowIfAnyFailed`
+  - `waitForAllAndIgnoreErrors`
+  - `waitForAllAndLogErrors`
+  - `waitForAllGeneratedAndThrowErrorsPMap`
+  - `asyncIter`
+
+## Best Practices
+- ❌ Don't use `.then` and `.catch`
+  - Use async-await exclusively
+- ❌ Avoid mutating function parameters
+  - If necessary, mark as mutable: `mutablePermissionsArray`
+- ✅ Use descriptive parameter names that indicate purpose
+- ✅ Prefer function declarations for named functions
+- ✅ Use arrow functions for callbacks and in method bodies that need `this`
+- ❌ Don't use function expressions, use arrow functions instead
+- ✅ Only use concise arrow function bodies when return value is actually used
+- ✅ Avoid rebinding `this`
+- ✅ Prefer passing arrow functions as callbacks

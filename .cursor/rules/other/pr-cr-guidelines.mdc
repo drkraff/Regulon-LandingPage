@@ -1,0 +1,165 @@
+---
+alwaysApply: false
+---
+# Pull Request & Code Review Guidelines
+
+## Table of Contents
+1. [Creating Pull Requests](mdc:#creating-pull-requests)
+2. [Commit Messages](mdc:#commit-messages)
+3. [PR Description](mdc:#pr-description)
+4. [Code Review Process](mdc:#code-review-process)
+5. [Reviewer Guidelines](mdc:#reviewer-guidelines)
+6. [Author Guidelines](mdc:#author-guidelines)
+
+## Creating Pull Requests
+
+### Size Guidelines
+- ✅ Keep PRs small and focused
+- ✅ Aim for around 100 lines of change
+- ❌ Avoid PRs larger than 1000 lines
+- ✅ Split large changes into multiple PRs
+
+### Best Practices
+- ✅ Make one self-contained change per PR
+- ✅ Include related test code
+- ✅ Ensure system works after each PR
+- ✅ Keep PRs independent when possible
+- ✅ Include all necessary context
+
+## Commit Messages
+
+### Conventional Commits Format
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+### Types
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation changes
+- `style`: Code style changes
+- `refactor`: Code refactoring
+- `perf`: Performance improvements
+- `test`: Adding/updating tests
+- `build`: Build system changes
+- `ci`: CI configuration changes
+- `chore`: Other changes
+
+### Examples
+```bash
+feat(auth): add OAuth2 login support
+fix(api): handle null response in user endpoint
+docs(readme): update installation instructions
+```
+
+## PR Description
+
+### First Line
+- ✅ Write a short, focused summary
+- ✅ Use imperative mood
+- ✅ Keep it under 72 characters
+- ✅ Make it standalone
+
+### Body
+- ✅ Explain what and why
+- ✅ Include context and background
+- ✅ Mention any trade-offs
+- ✅ Reference related issues/PRs
+- ✅ Include relevant metrics/data
+
+### Examples
+
+#### Good Example
+```
+Add rate limiting to API endpoints
+
+Implement rate limiting to prevent abuse of our API endpoints. This change:
+- Adds rate limiting middleware
+- Configures limits based on user tier
+- Includes monitoring and alerts
+- Updates documentation
+
+Fixes #123
+```
+
+#### Bad Example
+```
+Fix bug
+```
+
+## Code Review Process
+
+### Review Speed
+- ✅ Respond to PRs within 24 hours
+- ✅ Prioritize small PRs
+- ✅ Block on blocking issues only
+- ✅ Use "LGTM" for simple approvals
+
+### Review Focus
+1. Code Health
+   - Design
+   - Functionality
+   - Complexity
+   - Testing
+   - Naming
+   - Comments
+
+2. Security
+   - Input validation
+   - Authentication
+   - Authorization
+   - Data handling
+
+3. Performance
+   - Algorithm efficiency
+   - Resource usage
+   - Scalability
+
+## Reviewer Guidelines
+
+### Review Steps
+1. Look at the big picture
+2. Look for potential issues
+3. Look at the details
+4. Look for tests
+5. Look for documentation
+
+### Comment Guidelines
+- ✅ Be constructive and helpful
+- ✅ Explain reasoning
+- ✅ Accept author's style
+- ✅ Distinguish between preferences and requirements
+- ✅ Avoid "nit" comments
+
+### Navigation Tips
+- ✅ Start with a high-level review
+- ✅ Look at tests first
+- ✅ Review related files
+- ✅ Check for consistency
+
+## Author Guidelines
+
+### Responding to Reviews
+- ✅ Thank reviewers
+- ✅ Address all comments
+- ✅ Explain if disagreeing
+- ✅ Push back when appropriate
+- ✅ Iterate until resolved
+
+### Handling Pushback
+- ✅ Stay professional
+- ✅ Explain reasoning
+- ✅ Provide data when possible
+- ✅ Accept feedback when valid
+- ✅ Escalate if needed
+
+### Best Practices
+- ✅ Keep PRs up to date
+- ✅ Respond promptly
+- ✅ Be open to feedback
+- ✅ Maintain good communication
+- ✅ Follow up on resolved issues

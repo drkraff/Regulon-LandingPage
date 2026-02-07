@@ -1,0 +1,28 @@
+---
+description: REST API design patterns and guidelines
+alwaysApply: false
+---
+# REST API Design
+
+## API Guidelines
+- ✅ Follow REST resource naming guidelines
+- ✅ Follow best practices for REST API design
+- ✅ Use appropriate HTTP status codes
+- ✅ Provide meaningful error responses
+- ✅ Document API endpoints clearly
+
+## NestJS Guidelines
+
+> **Note**: For comprehensive NestJS patterns, architecture, and best practices, see [Backend and Developer API Development Guidelines](nest-guidelines.mdc).
+
+### Basic Naming Conventions
+- ✅ Use appropriate suffixes:
+  - Services: `Service` suffix, `.service.ts`
+  - Controllers: `Controller` suffix, `.controller.ts`
+  - Modules: `Module` suffix, `.module.ts`
+- ✅ Name microservice modules after service
+  ```typescript
+  // file-processor.module.ts
+  export class FileProcessorModule {}
+  ```
+

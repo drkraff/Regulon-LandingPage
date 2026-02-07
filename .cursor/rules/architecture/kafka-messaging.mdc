@@ -1,0 +1,22 @@
+---
+description: Kafka topic naming and message handling patterns
+alwaysApply: false
+---
+# Kafka & Message Handling
+
+## Topic Naming
+- ✅ Name topics by event, not by consumers
+- ✅ Use hierarchical naming: scope → event
+  ```typescript
+  // Good
+  'aws.rds.new.clone'
+  'aws.s3.new.bucket'
+  'sql.schema.post.datastore'
+  ```
+- ✅ Include example producer/consumer in a `.kafka` file for new topics
+
+## Message Interfaces
+- ✅ Export `KafkaMessageInterface` instead of `KafkaTopic`
+- ✅ Avoid implementing handlers that just forward messages between topics
+  - Exception: Parallel processing prevention
+- ✅ Use structured message interfaces with proper typing

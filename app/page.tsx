@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AuditSection } from "@/components/AuditSection";
 
 export default function Home() {
   return (
@@ -11,8 +12,8 @@ export default function Home() {
           <p className="mx-auto mt-4 max-w-xl text-white/90">
             Drop your DoC or Product File here. No signup required. Processing is done on your device.
           </p>
-          <div className="mt-10 rounded-xl border-2 border-dashed border-white/40 bg-white/10 py-16 px-6">
-            <p className="text-white/80">[Upload area — Phase 3]</p>
+          <div className="mt-10">
+            <AuditSection />
           </div>
         </div>
       </section>
