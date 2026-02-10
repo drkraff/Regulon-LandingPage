@@ -12,16 +12,24 @@ function getStoredFont(): FontStep {
   if (typeof window === "undefined") {
     return 100;
   }
-  const v = window.localStorage.getItem(STORAGE_KEY_FONT);
-  const n = v !== null ? Number.parseInt(v, 10) : NaN;
-  return FONT_STEPS.includes(n as FontStep) ? (n as FontStep) : 100;
+  try {
+    const v = window.localStorage.getItem(STORAGE_KEY_FONT);
+    const n = v !== null ? Number.parseInt(v, 10) : NaN;
+    return FONT_STEPS.includes(n as FontStep) ? (n as FontStep) : 100;
+  } catch {
+    return 100;
+  }
 }
 
 function getStoredContrast(): boolean {
   if (typeof window === "undefined") {
     return false;
   }
-  return window.localStorage.getItem(STORAGE_KEY_CONTRAST) === "1";
+  try {
+    return window.localStorage.getItem(STORAGE_KEY_CONTRAST) === "1";
+  } catch {
+    return false;
+  }
 }
 
 function applyToDocument(font: FontStep, contrast: boolean): void {
@@ -37,9 +45,16 @@ function persistToStorage(font: FontStep, contrast: boolean): void {
   if (typeof window === "undefined") {
     return;
   }
-  window.localStorage.setItem(STORAGE_KEY_FONT, String(font));
-  window.localStorage.setItem(STORAGE_KEY_CONTRAST, contrast ? "1" : "0");
+  try {
+    window.localStorage.setItem(STORAGE_KEY_FONT, String(font));
+    window.localStorage.setItem(STORAGE_KEY_CONTRAST, contrast ? "1" : "0");
+  } catch {
+    // localStorage unavailable (private mode, quota, disabled)
+  }
 }
+
+const buttonClass =
+  "rounded px-2 py-1 text-sm font-medium text-foreground hover:bg-foreground/10 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background";
 
 /**
  * Accessibility widget: font resize and high-contrast toggle.
@@ -65,42 +80,31 @@ export function AccessibilityWidget() {
   const increaseFont = useCallback(() => {
     const i = FONT_STEPS.indexOf(fontPercent);
     if (i < FONT_STEPS.length - 1) {
-      const next = FONT_STEPS[i + 1];
-      setFontPercent(next);
-      applyToDocument(next, highContrast);
-      persistToStorage(next, highContrast);
+      setFontPercent(FONT_STEPS[i + 1]);
     }
-  }, [fontPercent, highContrast]);
+  }, [fontPercent]);
 
   const decreaseFont = useCallback(() => {
     const i = FONT_STEPS.indexOf(fontPercent);
     if (i > 0) {
-      const next = FONT_STEPS[i - 1];
-      setFontPercent(next);
-      applyToDocument(next, highContrast);
-      persistToStorage(next, highContrast);
+      setFontPercent(FONT_STEPS[i - 1]);
     }
-  }, [fontPercent, highContrast]);
+  }, [fontPercent]);
 
   const toggleContrast = useCallback(() => {
-    setHighContrast((prev) => {
-      const next = !prev;
-      applyToDocument(fontPercent, next);
-      persistToStorage(fontPercent, next);
-      return next;
-    });
-  }, [fontPercent]);
+    setHighContrast((prev) => !prev);
+  }, []);
 
   return (
     <section
-      className="fixed bottom-4 right-4 z-50 flex flex-col gap-1 rounded-lg border border-border bg-background p-2 shadow-md"
+      className="fixed bottom-6 right-4 z-50 flex flex-col gap-1 rounded-lg border border-border bg-background p-2 shadow-md"
       aria-label="נגישות"
     >
       <div className="flex items-center gap-1">
         <button
           type="button"
           onClick={decreaseFont}
-          className="rounded px-2 py-1 text-sm font-medium text-foreground hover:bg-foreground/10"
+          className={buttonClass}
           aria-label="הקטן טקסט"
         >
           A-
@@ -108,7 +112,7 @@ export function AccessibilityWidget() {
         <button
           type="button"
           onClick={increaseFont}
-          className="rounded px-2 py-1 text-sm font-medium text-foreground hover:bg-foreground/10"
+          className={buttonClass}
           aria-label="הגדל טקסט"
         >
           A+
@@ -117,7 +121,7 @@ export function AccessibilityWidget() {
       <button
         type="button"
         onClick={toggleContrast}
-        className="rounded px-2 py-1 text-sm font-medium text-foreground hover:bg-foreground/10"
+        className={buttonClass}
         aria-label="ניגודיות גבוהה"
         aria-pressed={highContrast}
       >

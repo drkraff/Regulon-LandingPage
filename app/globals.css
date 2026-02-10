@@ -30,6 +30,9 @@ html {
 }
 
 /* Accessibility: font-size steps (widget sets data-font-size on html) */
+html[data-font-size="100"] {
+  font-size: 100%;
+}
 html[data-font-size="110"] {
   font-size: 110%;
 }
@@ -42,6 +45,7 @@ html[data-contrast="high"] {
   --background: #ffffff;
   --foreground: #000000;
   --border: #000000;
+  --muted: #000000;
 }
 html[data-contrast="high"] body {
   background: var(--background);

@@ -49,7 +49,6 @@ export default function AccessibilityPage() {
             <ul className="mt-1 list-disc pr-6">
               <li>הגדלת/הקטנת גופן (100%, 110%, 125%).</li>
               <li>שינוי ניגודיות (Contrast) להתאמה אישית.</li>
-              <li>הדגשת קישורים ושינוי גופן לקריא יותר.</li>
             </ul>
           </li>
           <li>

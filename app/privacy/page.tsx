@@ -58,7 +58,7 @@ export default function PrivacyPage() {
         <ul className="mt-2 list-disc space-y-1 pr-6 text-foreground">
           <li>ניהול רשימת ההמתנה ועדכון על השקת המוצר.</li>
           <li>מתן מענה לפניות שירות וניתוח צרכי משתמשים.</li>
-          <li>דיוור שיווקי ועדכונים, בכפוףכמתך המפורשת.</li>
+          <li>דיוור שיווקי ועדכונים, בכפוף להסכמתך המפורשת.</li>
         </ul>
         <p className="mt-2 text-foreground">
           אנו פועלים לפי עקרון &quot;צמצום הנתונים&quot; ואוספים רק את המידע

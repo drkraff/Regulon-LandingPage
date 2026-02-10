@@ -17,6 +17,12 @@ Landing page for **Regulon** — AI-powered Product File compliance for Israeli 
 
 **Before launch:** Fill all placeholders in `/privacy` and `/accessibility` (company name, address, contact and DPO email, accessibility contact). Search for `[` in those files.
 
+## Summary & next phase
+
+**What we have:** Hebrew-only RTL landing page with hero, problem, features, trust, and social-proof placeholder; upload area (client-side); stub DoC check and results panel; waitlist CTA and form (name, email, phone, marketing opt-in) inline below results; accessibility widget (font resize 100/110/125%, high-contrast toggle, persisted); full Privacy Policy and Accessibility Statement pages plus DPO section (placeholders to fill); skip link and legal links in footer. Tests for upload, results, waitlist, and accessibility widget.
+
+**Next phase (Phase 5 — Performance & analytics):** Image optimization (WebP/AVIF), metrics/dashboard page (restricted), core events (CTA clicks, form starts, form submits). Alternative: backend for waitlist storage.
+
 ## Requirements
 
 Single source of truth for requirements and implementation decisions:
