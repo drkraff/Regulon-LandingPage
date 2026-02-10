@@ -12,7 +12,10 @@ Landing page for **Regulon** — AI-powered Product File compliance for Israeli 
 
 - **Phase 1 done:** Foundation (RTL, design system, Heebo), basic layout and components.
 - **Phase 2 done:** Hero, Problem, Features, Trust, Social proof placeholder; nav & footer; legal stub pages; skip link (דלג לתוכן הראשי).
-- **Phase 3 — Done:** Upload area, stub check + results panel, waitlist CTA + form (inline below results). Next: Phase 4 (legal) or backend for waitlist storage.
+- **Phase 3 — Done:** Upload area, stub check + results panel, waitlist CTA + form (inline below results).
+- **Phase 4 — Done:** Accessibility widget, Privacy Policy, Accessibility Statement, DPO section. Next: Phase 5 (performance & analytics) or backend for waitlist.
+
+**Before launch:** Fill all placeholders in `/privacy` and `/accessibility` (company name, address, contact and DPO email, accessibility contact). Search for `[` in those files.
 
 ## Requirements
 
