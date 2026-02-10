@@ -3,6 +3,7 @@ import { Heebo } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { AccessibilityWidget } from "@/components/AccessibilityWidget";
 
 const heebo = Heebo({
   variable: "--font-heebo",
@@ -34,6 +35,7 @@ export default function RootLayout({
           <main id="main" className="flex-1">{children}</main>
           <Footer />
         </div>
+        <AccessibilityWidget />
       </body>
     </html>
   );
