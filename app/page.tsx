@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AuditSection } from "@/components/AuditSection";
+import { ScrollToAuditLink } from "@/components/ScrollToAuditLink";
 
 export default function Home() {
   return (
@@ -30,12 +31,11 @@ export default function Home() {
             Leverage the European Directives Track (Code 65) to bypass physical testing. Automate your Hebrew labeling and compliance verification instantly.
           </p>
           <div className="mt-10">
-            <Link
-              href="#audit"
+            <ScrollToAuditLink
               className="inline-flex items-center rounded-lg bg-primary px-6 py-3 text-base font-medium text-white transition-colors hover:bg-primary-bright"
             >
               Start Your Compliance Audit
-            </Link>
+            </ScrollToAuditLink>
           </div>
           <p className="mt-6 text-sm text-muted">
             Compliant with Amendment 13 &amp; IS 5568
