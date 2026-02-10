@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build & Next.js
+.next/
+out/
+build/
+dist/
+
+# Environment
+.env
+.env*
+
+# Debug & logs
+*.log
+
+# IDE & OS
+.idea/
+.vscode/
+.DS_Store
+
+# Testing & coverage
+coverage/
+.nyc_output/
+
+# Workspace metadata (optional; exclude if you want rules in context)
+.cursor/
+
+# Repomix output (avoid packing previous runs)
+repomix-output.xml
+repomix-*.xml
