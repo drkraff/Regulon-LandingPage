@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { UploadArea } from "@/components/UploadArea";
 import { ResultsPanel } from "@/components/ResultsPanel";
+import { WaitlistBlock } from "@/components/WaitlistBlock";
 import { stubCheckDoc } from "@/lib/stub-check-doc";
 import type { AuditResult } from "@/lib/audit-types";
 
@@ -34,6 +35,7 @@ export function AuditSection() {
       {result !== null && !isChecking && (
         <ResultsPanel result={result} />
       )}
+      <WaitlistBlock onSubmit={() => {}} />
     </div>
   );
 }
