@@ -3,30 +3,56 @@
 :root {
   --background: #ffffff;
   --foreground: #0f172a;
-  --primary: #1e3a5f;
+  --primary: #0052ff;
+  --primary-dark: #0039b3;
   --primary-bright: #2563eb;
-  --accent: #65a30d;
+  --secondary: #0a1929;
+  --accent: #c4f135;
+  --accent-dark: #98bd1a;
   --accent-muted: #84cc16;
-  --alert: #dc2626;
+  --sage: #86c232;
+  --alert: #d92d20;
   --muted: #64748b;
   --border: #e2e8f0;
+  --background-light: #f8fafc;
+  --background-dark: #0b1120;
+  --navy-900: #0a1929;
+  --navy-800: #11263c;
+  --slate-800: #1e293b;
+  --slate-600: #334155;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
   --color-primary-bright: var(--primary-bright);
+  --color-secondary: var(--secondary);
   --color-accent: var(--accent);
+  --color-accent-dark: var(--accent-dark);
   --color-accent-muted: var(--accent-muted);
+  --color-sage: var(--sage);
   --color-alert: var(--alert);
   --color-muted: var(--muted);
   --color-border: var(--border);
+  --color-background-light: var(--background-light);
+  --color-background-dark: var(--background-dark);
+  --color-navy-900: var(--navy-900);
+  --color-navy-800: var(--navy-800);
+  --color-slate-800: var(--slate-800);
+  --color-slate-600: var(--slate-600);
   --font-sans: var(--font-heebo), system-ui, sans-serif;
+  --font-display: var(--font-heebo), system-ui, sans-serif;
+  --shadow-glass: 0 8px 32px 0 rgba(10, 25, 41, 0.15);
+  --shadow-glass-sm: 0 4px 16px 0 rgba(10, 25, 41, 0.1);
+  --shadow-glow: 0 0 20px -5px rgba(0, 82, 255, 0.4);
+  --shadow-glow-accent: 0 0 15px -3px rgba(196, 241, 53, 0.5);
 }
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 5rem; /* Match fixed header height (h-20) */
 }
 
 /* Accessibility: font-size steps (widget sets data-font-size on html) */
@@ -83,4 +109,123 @@ body {
 [dir="rtl"] .numerals-ltr {
   unicode-bidi: embed;
   direction: ltr;
+}
+
+/* Glass panel effect - optimized for Firefox */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  will-change: backdrop-filter;
+  transform: translateZ(0);
+}
+
+/* Firefox-specific optimization */
+@-moz-document url-prefix() {
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
+
+.dark .glass-panel {
+  background: rgba(11, 17, 32, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@-moz-document url-prefix() {
+  .dark .glass-panel {
+    background: rgba(11, 17, 32, 0.95);
+  }
+}
+
+/* Background pattern */
+.bg-pattern {
+  background-image: radial-gradient(#0052ff 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.1;
+}
+
+/* Hero dashboard 3D effect - optimized for Firefox */
+.hero-dashboard {
+  transform: perspective(1000px) rotateY(12deg) rotateX(5deg);
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease-out;
+  will-change: transform;
+}
+
+.hero-dashboard:hover {
+  transform: perspective(1000px) rotateY(8deg) rotateX(2deg);
+}
+
+/* Firefox optimization - reduce 3D transforms for better performance */
+@-moz-document url-prefix() {
+  .hero-dashboard {
+    transform: perspective(1000px) rotateY(8deg) rotateX(2deg);
+  }
+  .hero-dashboard:hover {
+    transform: perspective(1000px) rotateY(6deg) rotateX(1deg);
+  }
+}
+
+/* Floating animation */
+@keyframes float {
+  0% {
+    transform: translateY(0px) translateZ(20px);
+  }
+  50% {
+    transform: translateY(-15px) translateZ(20px);
+  }
+  100% {
+    transform: translateY(0px) translateZ(20px);
+  }
+}
+
+.floating-card {
+  animation: float 6s ease-in-out infinite;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.floating-card-delayed {
+  animation: float 6s ease-in-out infinite 2s;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Scroll animation for authorities section - seamless loop */
+@keyframes scroll-seamless {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll-seamless {
+  display: flex;
+  animation: scroll-seamless 30s linear infinite;
+  will-change: transform;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .floating-card,
+  .floating-card-delayed,
+  .animate-scroll-seamless {
+    animation: none;
+  }
 }

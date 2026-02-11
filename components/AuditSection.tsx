@@ -27,15 +27,24 @@ export function AuditSection() {
   };
 
   return (
-    <div>
+    <div className="space-y-6">
       <UploadArea onFileSelect={handleFileSelect} />
       {isChecking && (
-        <p className="mt-6 text-center text-white/80">Checking…</p>
+        <div className="glass-panel rounded-xl shadow-glass-sm p-6 border border-slate-200 dark:border-white/20">
+          <div className="flex items-center justify-center gap-3">
+            <span className="material-icons-round text-primary animate-spin">settings</span>
+            <p className="text-base font-bold text-[#0a1929] dark:text-white">
+              בודק את הקובץ...
+            </p>
+          </div>
+        </div>
       )}
       {result !== null && !isChecking && (
         <ResultsPanel result={result} />
       )}
-      <WaitlistBlock onSubmit={() => {}} />
+      {!isChecking && result === null && (
+        <WaitlistBlock onSubmit={() => {}} />
+      )}
     </div>
   );
 }
