@@ -17,10 +17,9 @@ export function MaterialIconsLoader() {
     link2.rel = "stylesheet";
     document.head.appendChild(link2);
 
-    return () => {
-      document.head.removeChild(link1);
-      document.head.removeChild(link2);
-    };
+    // Do not remove links on unmount: they are global stylesheets. Removing them
+    // before the browser finishes loading can prevent icons from rendering, and
+    // leaving them avoids FOUC when navigating. The root layout stays mounted.
   }, []);
 
   return null;

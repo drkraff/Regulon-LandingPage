@@ -1,6 +1,6 @@
 export function SupportButton() {
   return (
-    <div className="fixed bottom-6 left-6 z-50">
+    <div className="fixed bottom-6 right-6 z-50">
       <button
         type="button"
         className="bg-primary hover:bg-primary-dark text-white p-4 rounded-full shadow-lg shadow-primary/30 transition-all transform hover:scale-110 group relative flex items-center gap-0 hover:gap-3 hover:pr-6 hover:pl-4 overflow-hidden h-14 w-14 hover:w-auto"

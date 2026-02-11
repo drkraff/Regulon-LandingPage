@@ -14,7 +14,7 @@ export default function Header() {
             className="flex-shrink-0 flex items-center gap-3"
           >
             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/20">
-              <span className="material-icons-round text-white text-2xl">shield</span>
+              <span className="material-icons-round text-white text-2xl" aria-hidden="true">shield</span>
             </div>
             <span className="font-display font-bold text-2xl tracking-tight text-[#0a1929] dark:text-white">
               Regulon

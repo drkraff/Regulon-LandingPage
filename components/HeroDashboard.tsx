@@ -1,8 +1,6 @@
-"use client";
-
 export function HeroDashboard() {
   return (
-    <div className="relative w-full max-w-lg hero-dashboard bg-white/90 dark:bg-navy-900/80 backdrop-blur-xl border border-white/60 dark:border-white/20 rounded-2xl shadow-glass p-6 group" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
+    <div className="relative w-full max-w-lg hero-dashboard bg-white/90 dark:bg-navy-900/80 backdrop-blur-xl border border-white/60 dark:border-white/20 rounded-2xl shadow-glass p-6 group" style={{ willChange: 'transform' }}>
       <div className="absolute -top-3 left-6 z-30 bg-sage text-white px-4 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 transform transition-transform group-hover:scale-105 border border-white/20">
         <span className="material-icons-round text-sm">verified_user</span>
         <span className="text-xs font-bold tracking-wide">SAFE &amp; COMPLIANT</span>

@@ -9,20 +9,6 @@ import { AuthoritiesCarousel } from "@/components/AuthoritiesCarousel";
 export default function Home() {
   return (
     <>
-      <section id="audit" className="bg-primary py-16 text-white sm:py-20 pt-32">
-        <div className="mx-auto max-w-6xl px-4 text-center sm:px-6">
-          <h2 className="text-2xl font-bold sm:text-3xl">
-            Check Your Product File Readiness
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-white/90">
-            Drop your DoC or Product File here. No signup required. Processing is done on your device.
-          </p>
-          <div className="mt-10">
-            <AuditSection />
-          </div>
-        </div>
-      </section>
-
       <section id="hero" className="relative pt-32 pb-16 lg:pt-48 lg:pb-16 overflow-hidden border-b border-border bg-background-light">
         <div className="absolute inset-0 z-0 bg-pattern pointer-events-none"></div>
         <div className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-primary/5 to-transparent z-0 pointer-events-none"></div>
@@ -37,11 +23,11 @@ export default function Home() {
                 <span className="text-sm font-bold tracking-wide">מוכן לרפורמת 2026</span>
               </div>
               <h1 className="text-4xl lg:text-6xl font-display font-black leading-tight mb-6">
-                <span className="text-white dark:text-white" style={{ textShadow: '2px 2px 4px rgba(10, 25, 41, 0.3), 0 0 8px rgba(10, 25, 41, 0.2)' }}>אוטומציה מלאה של </span>
+                <span className="text-[#0a1929] dark:text-white" style={{ textShadow: '2px 2px 4px rgba(10, 25, 41, 0.3), 0 0 8px rgba(10, 25, 41, 0.2)' }}>אוטומציה מלאה של </span>
                 <span className="text-primary">
                   תיקי מוצר
                 </span>
-                <span className="text-white dark:text-white" style={{ textShadow: '2px 2px 4px rgba(10, 25, 41, 0.3), 0 0 8px rgba(10, 25, 41, 0.2)' }}> ורגולציה</span>
+                <span className="text-[#0a1929] dark:text-white" style={{ textShadow: '2px 2px 4px rgba(10, 25, 41, 0.3), 0 0 8px rgba(10, 25, 41, 0.2)' }}> ורגולציה</span>
               </h1>
               <p className="text-lg text-slate-700 dark:text-slate-300 mb-8 max-w-2xl leading-relaxed font-medium">
                 הפלטפורמה הראשונה בישראל המייצרת הצהרות תאימות ומנהלת את תהליכי היבוא שלך באופן אוטומטי בעזרת בינה מלאכותית מתקדמת.
@@ -49,15 +35,19 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <ScrollToAuditLink className="bg-[#0a1929] dark:bg-white text-white dark:text-[#0a1929] hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg flex justify-center items-center gap-2">
                   התחל ניסיון חינם
-                  <span className="material-icons-round transform rotate-180">arrow_right_alt</span>
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary">
+                    <span className="material-icons-round text-white text-lg transform rotate-180">arrow_right_alt</span>
+                  </span>
                 </ScrollToAuditLink>
-                <a
-                  href="#"
-                  className="bg-white dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-800 dark:text-white hover:border-primary hover:text-primary font-bold py-4 px-8 rounded-xl transition-all flex justify-center items-center gap-2 backdrop-blur-sm"
+                <button
+                  type="button"
+                  className="bg-[#0a1929] dark:bg-white text-white dark:text-[#0a1929] hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg flex justify-center items-center gap-2"
                 >
-                  <span className="material-icons-round text-primary">play_circle</span>
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary">
+                    <span className="material-icons-round text-white text-lg">play_arrow</span>
+                  </span>
                   צפה בהדגמה
-                </a>
+                </button>
               </div>
               <div className="mt-10 flex items-center gap-6 text-sm text-slate-600 dark:text-slate-400 font-medium">
                 <div className="flex items-center gap-1">
@@ -75,6 +65,25 @@ export default function Home() {
               <HeroDashboard />
               <FloatingCards />
             </div>
+          </div>
+        </div>
+      </section>
+
+      <AuthoritiesCarousel />
+
+      <section id="audit" className="relative py-20 lg:py-32 overflow-hidden bg-primary border-b border-border">
+        <div className="absolute inset-0 z-0 bg-pattern pointer-events-none opacity-20"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-display font-black text-white mb-4">
+              בדוק את מוכנות תיק המוצר שלך
+            </h2>
+            <p className="text-lg text-white/90 max-w-2xl mx-auto font-medium">
+              העלה את הצהרת התאימות או תיק המוצר שלך. אין צורך בהרשמה. העיבוד מתבצע במכשיר שלך.
+            </p>
+          </div>
+          <div className="flex justify-center">
+            <AuditSection />
           </div>
         </div>
       </section>
@@ -100,8 +109,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <AuthoritiesCarousel />
 
       <section id="features" className="py-20 relative bg-white dark:bg-navy-900/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

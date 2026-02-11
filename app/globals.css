@@ -43,6 +43,7 @@
   --color-slate-800: var(--slate-800);
   --color-slate-600: var(--slate-600);
   --font-sans: var(--font-heebo), system-ui, sans-serif;
+  --font-display: var(--font-heebo), system-ui, sans-serif;
   --shadow-glass: 0 8px 32px 0 rgba(10, 25, 41, 0.15);
   --shadow-glass-sm: 0 4px 16px 0 rgba(10, 25, 41, 0.1);
   --shadow-glow: 0 0 20px -5px rgba(0, 82, 255, 0.4);
@@ -51,6 +52,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 5rem; /* Match fixed header height (h-20) */
 }
 
 /* Accessibility: font-size steps (widget sets data-font-size on html) */
@@ -194,17 +196,18 @@ body {
 }
 
 /* Scroll animation for authorities section - seamless loop */
-@keyframes scroll {
+@keyframes scroll-seamless {
   0% {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-33.333%);
+    transform: translateX(-50%);
   }
 }
 
-.animate-scroll {
-  animation: scroll 40s linear infinite;
+.animate-scroll-seamless {
+  display: flex;
+  animation: scroll-seamless 30s linear infinite;
   will-change: transform;
 }
 
@@ -222,7 +225,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .floating-card,
   .floating-card-delayed,
-  .animate-scroll {
+  .animate-scroll-seamless {
     animation: none;
   }
 }

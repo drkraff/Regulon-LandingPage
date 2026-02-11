@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const footerLinkClass =
-  "text-sm text-slate-600 dark:text-slate-400 font-medium transition-colors hover:text-primary";
+  "text-sm text-muted-foreground font-medium transition-colors hover:text-primary";
 
 export default function Footer() {
   return (
@@ -123,9 +123,9 @@ export default function Footer() {
             <Link href="/privacy" className="hover:text-primary">
               מדיניות פרטיות
             </Link>
-            <a href="#" className="hover:text-primary">
+            <span className="text-slate-600 dark:text-slate-400">
               אבטחת מידע
-            </a>
+            </span>
             <Link href="/accessibility" className="hover:text-primary">
               הצהרת נגישות
             </Link>
