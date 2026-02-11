@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AccessibilityWidget } from "@/components/AccessibilityWidget";
+import { MaterialIconsLoader } from "@/components/MaterialIconsLoader";
 
 const heebo = Heebo({
   variable: "--font-heebo",
@@ -24,6 +25,7 @@ export default function RootLayout({
   return (
     <html lang="he" dir="rtl">
       <body className={`${heebo.variable} font-sans antialiased`}>
+        <MaterialIconsLoader />
         <a
           href="/#main"
           className="sr-only focus:absolute focus:top-4 focus:right-4 focus:rounded focus:bg-primary focus:px-4 focus:py-2 focus:text-white focus:outline-none focus:ring-2 focus:ring-white"
