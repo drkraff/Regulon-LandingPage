@@ -29,6 +29,52 @@ Single source of truth for requirements and implementation decisions:
 
 - [.md/Landing-Page-PRD-Reference.md](.md/Landing-Page-PRD-Reference.md)
 
+## Waitlist backend (Turso) — what you need to do
+
+The waitlist form saves signups to a **Turso** database. Turso is a hosted SQLite service (free tier). You do **not** install Turso on your computer; you only create a database in the cloud and put two values into a file.
+
+### 1. Register (free)
+
+- Go to **[https://turso.tech](https://turso.tech)** and sign up (e.g. with GitHub or email).
+- No payment required for the free tier.
+
+### 2. Create a database and get credentials
+
+**Option A — Using the Turso website**
+
+1. Log in at [https://turso.tech](https://turso.tech).
+2. Create a new database (e.g. name it `regulon-waitlist`).
+3. In the dashboard, find your database’s **URL** (looks like `https://xxxxx-xxx.turso.io`) and create an **auth token**. Copy both.
+
+**Option B — Using the Turso CLI (optional)**
+
+1. Install the CLI: [Turso CLI install](https://docs.turso.tech/cli/install).
+2. Log in: `turso auth login`.
+3. Create the DB: `turso db create regulon-waitlist`.
+4. Get the URL: `turso db show regulon-waitlist --url`.
+5. Create a token: `turso db tokens create regulon-waitlist`. Copy the token.
+
+### 3. Put the credentials in your project
+
+1. In the project root, copy the example env file:
+   ```bash
+   copy .env.example .env.local
+   ```
+   (On macOS/Linux: `cp .env.example .env.local`.)
+
+2. Open **`.env.local`** and set:
+
+   - **TURSO_DATABASE_URL** = the database URL (e.g. `https://xxxxx-xxx.turso.io`).
+   - **TURSO_AUTH_TOKEN** = the token you copied.
+   - **ADMIN_USERNAME** = any username you choose (for viewing the waitlist in the browser).
+   - **ADMIN_PASSWORD** = any password you choose.
+
+3. Save the file. Do **not** commit `.env.local` (it is in `.gitignore`).
+
+The app will create the `waitlist_signups` table automatically the first time someone submits the form. To view signups, open `http://localhost:3000/admin/waitlist` in your browser and enter the same ADMIN_USERNAME and ADMIN_PASSWORD when prompted. (Dates are shown in your local timezone.)
+
+---
+
 ## Local development (after setup)
 
 ```bash
