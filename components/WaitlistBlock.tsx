@@ -5,14 +5,18 @@ export interface WaitlistFormData {
   email: string;
   phone: string;
   marketingOptIn: boolean;
+  /** Honeypot: sent to API; server rejects if non-empty. */
+  fax?: string;
 }
 
 export interface WaitlistBlockProps {
   /** Called when user submits the waitlist form. */
-  onSubmit: (data: WaitlistFormData) => void;
+  onSubmit: (data: WaitlistFormData) => void | Promise<void>;
+  /** When true, submit button is disabled (e.g. request in flight). */
+  isSubmitting?: boolean;
 }
 
-export function WaitlistBlock({ onSubmit }: WaitlistBlockProps) {
+export function WaitlistBlock({ onSubmit, isSubmitting = false }: WaitlistBlockProps) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -22,8 +26,9 @@ export function WaitlistBlock({ onSubmit }: WaitlistBlockProps) {
       phone: (form.elements.namedItem("phone") as HTMLInputElement).value,
       marketingOptIn: (form.elements.namedItem("marketingOptIn") as HTMLInputElement)
         .checked,
+      fax: (form.elements.namedItem("fax") as HTMLInputElement | null)?.value ?? "",
     };
-    onSubmit(data);
+    void onSubmit(data);
   };
 
   return (
@@ -35,6 +40,10 @@ export function WaitlistBlock({ onSubmit }: WaitlistBlockProps) {
         קבל גישה מוקדמת כשאנחנו משיקים.
       </p>
       <form onSubmit={handleSubmit} className="mt-4 space-y-4" dir="rtl">
+        <div className="hidden absolute -left-[9999px]" aria-hidden="true">
+          <label htmlFor="waitlist-fax">Fax</label>
+          <input id="waitlist-fax" name="fax" type="text" tabIndex={-1} autoComplete="off" />
+        </div>
         <div>
           <label htmlFor="waitlist-fullName" className="block text-sm font-medium text-white text-right">
             שם מלא <span className="text-accent">*</span>
@@ -93,9 +102,10 @@ export function WaitlistBlock({ onSubmit }: WaitlistBlockProps) {
         </div>
         <button
           type="submit"
-          className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent/90"
+          disabled={isSubmitting}
+          className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent/90 disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          הצטרף לרשימת המתנה
+          {isSubmitting ? "שולח..." : "הצטרף לרשימת המתנה"}
         </button>
       </form>
     </section>
