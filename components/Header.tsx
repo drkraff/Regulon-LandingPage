@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ScrollToAuditLink } from "./ScrollToAuditLink";
 
 const navLinkClass =
-  "text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors hover:text-primary";
+  "text-sm font-bold text-white transition-colors hover:text-white/90";
 
 export default function Header() {
   return (
@@ -20,7 +20,10 @@ export default function Header() {
               Regulon
             </span>
           </Link>
-          <nav className="hidden md:flex space-x-8 space-x-reverse" aria-label="תפריט ראשי">
+          <nav
+            className="hidden md:flex flex-row-reverse gap-8 bg-primary rounded-lg px-5 py-2.5 shadow-glow"
+            aria-label="תפריט ראשי"
+          >
             <Link href="/pricing" className={navLinkClass}>
               תמחור
             </Link>
