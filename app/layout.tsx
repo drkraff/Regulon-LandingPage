@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AccessibilityWidget } from "@/components/AccessibilityWidget";
 import { MaterialIconsLoader } from "@/components/MaterialIconsLoader";
+import { siteConfig } from "@/lib/site-config";
 
 const heebo = Heebo({
   variable: "--font-heebo",
@@ -12,9 +13,11 @@ const heebo = Heebo({
   display: "swap",
 });
 
+const { meta, locale } = siteConfig;
+
 export const metadata: Metadata = {
-  title: "Regulon — Product File Compliance for Israeli Importers",
-  description: "AI-powered Product File and Code 65 readiness for Israeli importers.",
+  title: meta.defaultTitle,
+  description: meta.defaultDescription,
 };
 
 export default function RootLayout({
@@ -23,14 +26,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="he" dir="rtl">
+    <html lang={locale.lang} dir={locale.dir}>
       <body className={`${heebo.variable} font-sans antialiased`}>
         <MaterialIconsLoader />
         <a
           href="/#main"
           className="sr-only focus:absolute focus:top-4 focus:right-4 focus:rounded focus:bg-primary focus:px-4 focus:py-2 focus:text-white focus:outline-none focus:ring-2 focus:ring-white"
         >
-          דלג לתוכן הראשי
+          {siteConfig.skipLinkText}
         </a>
         <div className="flex min-h-screen flex-col">
           <Header />

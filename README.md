@@ -29,6 +29,15 @@ Single source of truth for requirements and implementation decisions:
 
 - [.md/Landing-Page-PRD-Reference.md](.md/Landing-Page-PRD-Reference.md)
 
+## Using this as a template
+
+The shell (layout, header, footer) and default metadata are driven by a **site config** so you can reuse this repo for other landing pages.
+
+- **Config file:** [lib/site-config.ts](lib/site-config.ts)
+- **What you can customize:** Brand name, tagline, logo icon, default title/description, locale (`lang`, `dir`), nav links, primary CTA, footer tagline/columns/social/copyright, and skip-link text.
+- **How to rebrand:** Edit `siteConfig` in `lib/site-config.ts` (or replace it with a JSON loader). Layout, Header, and Footer read from it; the home page hero and sections are still inline in [app/page.tsx](app/page.tsx) and can be refactored to use config later.
+- **Optional:** To remove or change the waitlist/audit block, edit [app/page.tsx](app/page.tsx) and the API routes; see [.md/Waitlist-Backend-and-Security-Plan.md](.md/Waitlist-Backend-and-Security-Plan.md). Deploy on Vercel with env for Turso if you keep the waitlist.
+
 ## Waitlist backend (Turso) — what you need to do
 
 The waitlist form saves signups to a **Turso** database. Turso is a hosted SQLite service (free tier). You do **not** install Turso on your computer; you only create a database in the cloud and put two values into a file.
