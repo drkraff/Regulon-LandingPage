@@ -18,7 +18,7 @@ describe("UploadArea", () => {
   it("should show prompt when no file is selected", () => {
     render(<UploadArea onFileSelect={() => {}} />);
     expect(
-      screen.getByText(/drop your doc or product file here/i)
+      screen.getByText(/העלה את הצהרת התאימות או תיק המוצר שלך/)
     ).toBeInTheDocument();
   });
 });

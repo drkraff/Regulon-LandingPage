@@ -1,8 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
 import { waitlistRequestBodySchema } from "@/lib/waitlist-schema";
+import { checkRateLimit } from "@/lib/waitlist-rate-limit";
 import { ensureWaitlistTable, getDbClient } from "@/lib/db";
 
+function getClientIp(request: NextRequest): string {
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded !== null) {
+    const first = forwarded.split(",")[0]?.trim();
+    if (first !== undefined && first !== "") {
+      return first;
+    }
+  }
+  const real = request.headers.get("x-real-ip");
+  if (real !== null && real !== "") {
+    return real;
+  }
+  return "unknown";
+}
+
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+  const { allowed } = checkRateLimit(ip);
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Too many requests" },
+      { status: 429 }
+    );
+  }
+
   let body: unknown;
   try {
     body = await request.json();

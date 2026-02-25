@@ -73,6 +73,8 @@ The waitlist form saves signups to a **Turso** database. Turso is a hosted SQLit
 
 The app will create the `waitlist_signups` table automatically the first time someone submits the form. To view signups, open `http://localhost:3000/admin/waitlist` in your browser and enter the same ADMIN_USERNAME and ADMIN_PASSWORD when prompted. (Dates are shown in your local timezone.)
 
+**Rate limit:** `POST /api/waitlist` is limited to **5 requests per IP per minute** to reduce abuse and scraping. Over-limit requests receive `429 Too Many Requests`.
+
 ---
 
 ## Local development (after setup)
